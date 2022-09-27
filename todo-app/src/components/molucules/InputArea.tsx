@@ -23,7 +23,7 @@ const InputArea: React.FC = () => {
       uid: uid,
       content: inputTaskText,
       createdAt: serverTimestamp(),
-      isComplete: false,
+      status: 'noStarted'
     })
     setInputTaskText('')
     initGet(uid)

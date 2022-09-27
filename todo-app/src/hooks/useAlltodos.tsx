@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRecoilState } from 'recoil'
-import { collection, addDoc, query, orderBy, doc, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 
 import { taskItemState } from '../states/inpuTaskState';
@@ -19,7 +19,8 @@ const useAlltodos = () => {
       todos.push({
         id: doc.id,
         content: doc.data().content,
-        cratedAt: doc.data().cratedAt
+        cratedAt: doc.data().cratedAt,
+        status: doc.data().status
       });
     });
     console.log(todos);
