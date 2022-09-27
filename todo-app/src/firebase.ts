@@ -2,7 +2,9 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -19,9 +21,9 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage();
 
-
+//ポップアップでグーグルサインイン
 const provider = new GoogleAuthProvider();
-const auth = getAuth();
+export const auth = getAuth();
 
 export const sinInWithGoogle = () => {
   signInWithPopup(auth, provider)
@@ -38,4 +40,12 @@ export const sinInWithGoogle = () => {
       const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
     });
+}
+//サインアウト
+export const logOut = () => {
+  signOut(auth).then((res) => {
+    document.location.reload();
+  }).catch((error) => {
+    console.log(error.message);
+  });
 }

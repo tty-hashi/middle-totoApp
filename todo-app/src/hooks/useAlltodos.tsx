@@ -9,12 +9,11 @@ const useAlltodos = () => {
   const [taskItems, setTaskItems] = useRecoilState(taskItemState);
 
   //firebaseからtaskを取得して、stateを更新
-  const initGet = async () => {
+  const initGet = async (uid: string) => {
     console.log(`snapshot get`)
-    const todo = await query(collection(db, 'todos'));
+    const todo = await query(collection(db, 'todos'), where('uid', '==', uid));
     const querySnapshot = await getDocs(todo);
     console.log(querySnapshot);
-
     let todos: any[] = [];
     querySnapshot.forEach((doc) => {
       todos.push({

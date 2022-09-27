@@ -1,17 +1,25 @@
 import React from 'react'
-import { RecoilRoot } from 'recoil'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import styled from '@emotion/styled'
+
 import InputArea from '../molucules/InputArea'
 import Tasks from '../molucules/Tasks'
+import { auth } from '../../firebase'
+import Btn from '../atoms/Btn'
+import { sinInWithGoogle } from '../../firebase';
 
 const TodoList: React.FC = () => {
+  const [user] = useAuthState(auth);
   return (
-    <RecoilRoot>
-      <Sdiv >
-        <InputArea />
-        <Tasks />
-      </Sdiv>
-    </RecoilRoot>
+    <Sdiv >
+      {user ?
+        (<>
+          <InputArea />
+          <Tasks />
+        </>)
+        :
+        <Btn onClick={sinInWithGoogle} >ログイン</Btn>}
+    </Sdiv>
   )
 }
 

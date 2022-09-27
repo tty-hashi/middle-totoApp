@@ -9,7 +9,7 @@ const InputText: React.FC = () => {
 
   return (
     <>
-      <Input value={inputTaskText} onChange={e => setInputTaskText(e.target.value)} htmlSize={4} width='350px' marginRight={8} placeholder='Todoを入力してください' />
+      <Input value={inputTaskText} onChange={e => setInputTaskText(e.target.value)} autoFocus htmlSize={4} width='350px' marginRight={8} placeholder='Todoを入力してください' />
     </>
   )
 }

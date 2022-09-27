@@ -1,25 +1,27 @@
 import React, { useEffect } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { doc, deleteDoc } from "firebase/firestore";
 import { Box, List, ListItem, Select, Spacer } from '@chakra-ui/react'
 
 import Btn from '../atoms/Btn'
 import { taskItemState } from '../../states/inpuTaskState'
 import useAlltodos from '../../hooks/useAlltodos'
+import { db } from '../../firebase';
+import { userState } from '../../states/userState';
 
 
 const Tasks: React.FC = () => {
   const { initGet } = useAlltodos();
   const [taskItems, setTaskItems] = useRecoilState(taskItemState);
+  const uid = useRecoilValue(userState)
   //削除ボタンでタスクを一つ削除
-  const taskDalete = (i: number): void => {
-    const newTaskItems = [...taskItems];
-    newTaskItems.splice(i, 1);
-    setTaskItems(newTaskItems);
+  const todoDelete = async (id: string): Promise<void> => {
+    await deleteDoc(doc(db, 'todos', id))
+    initGet(uid);
   }
-
   //firebaseからtaskを取得して、stateを更新
   useEffect(() => {
-    initGet()
+    initGet(uid);
   }, [])
   return (
     <>
@@ -35,7 +37,7 @@ const Tasks: React.FC = () => {
               <option value='option2'>進行中</option>
               <option value='option3'>完了</option>
             </Select>
-            <Btn onClick={() => { taskDalete(item.id) }}>削除</Btn>
+            <Btn onClick={() => { todoDelete(item.id) }}>削除</Btn>
           </ListItem>
         ))}
       </List>
