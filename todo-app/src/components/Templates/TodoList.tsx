@@ -28,5 +28,5 @@ export default TodoList
 const Sdiv = styled.div`
   margin: 0 auto;
   max-width: 700px;
-  height:calc(100vh - 112px);
+  min-height:calc(100vh - 112px);
 `

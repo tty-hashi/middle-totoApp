@@ -26,19 +26,23 @@ const Tasks: React.FC = () => {
     initGet(uid);
   }, [])
   //selectをハンドリング
-  const [taskProgress, setTaskProgress] = useRecoilState(taskProgressState);
-  const toggleComplete = async (uid:string) => {
-    const todo = await doc(db, 'todos', uid)
+  const [taskStatus, setTaskStatus] = useRecoilState(taskProgressState);
+
+  const updateStatus = async (uid: string, eventTaskProgress:string) => {
+    const todo =  doc(db, 'todos', uid)
     return updateDoc(todo, {
-      status: taskProgress,
+      status: eventTaskProgress,
       updateAt: serverTimestamp(),
     })
   }
-  const selectboxHandler = async (e: React.ChangeEvent<HTMLSelectElement>,postId:string) => {
-    setTaskProgress(e.target.value);
-    await toggleComplete(postId)
+
+  const selectboxHandler = async (e: React.ChangeEvent<HTMLSelectElement>, postId: string) => {
+    const statusValue = e.target.value;
+    setTaskStatus(statusValue);
+    await updateStatus(postId,statusValue)
     initGet(uid)
   }
+
   return (
     <>
       <List>
@@ -48,7 +52,7 @@ const Tasks: React.FC = () => {
               {item.content}
             </Box>
             <Spacer />
-            <Select w={'100px'} marginRight={4} value={item.status} onChange={(e:any) => {selectboxHandler(e,item.id)}} >
+            <Select w={'100px'} marginRight={4} value={item.status} onChange={(e: any) => { selectboxHandler(e, item.id) }} >
               <option value='noStarted'>未着手</option>
               <option value='inProgress'>進行中</option>
               <option value='done'>完了</option>
