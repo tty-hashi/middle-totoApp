@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Button, Input } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
 import { doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 import Btn from './Btn';
@@ -22,24 +22,32 @@ const EditingModal: React.FC<Props> = ({ postId }) => {
   //Modal openの動作
   const modalOpenSetBeforeText: (postId: string) => Promise<void> = async (postId) => {
     onOpen();
-    console.log(`編集の${postId}`);
-
     const docRef = doc(db, "todos", postId);
     const docSnap = await getDoc(docRef);
     const beforeText: any = docSnap.data();
-    console.log(beforeText.content);
     setInputEditingTaskText(beforeText.content);
   }
 
+  //inputValueHandler
+  let inputValue;
+
+  const inputValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputEditingTaskText(e.target.value)
+    inputValue = e.target.value;
+    return inputValue;
+  }
+
+
+
   //taskの上書き
-  const updateContent = async (postId: string) => {
+  const updateContent = async (postId: string, inputValue: string) => {
     const todo = doc(db, 'todos', postId)
-    onClose();
-    initGet(uid);
-    return updateDoc(todo, {
-      content: inputEditingTaskText,
+    await updateDoc(todo, {
+      content: inputValue,
       updateAt: serverTimestamp(),
     })
+    onClose();
+    initGet(uid);
   }
 
   return (
@@ -52,9 +60,9 @@ const EditingModal: React.FC<Props> = ({ postId }) => {
           <ModalCloseButton />
           <ModalBody>
           </ModalBody>
-          <Input value={inputEditingTaskText} onChange={e => setInputEditingTaskText(e.target.value)} autoFocus htmlSize={4} width='350px' mx='auto' />
+          <Input value={inputEditingTaskText} onChange={(e: React.ChangeEvent<HTMLInputElement>) => inputValueHandler(e)} autoFocus htmlSize={4} width='350px' mx='auto' />
           <ModalFooter>
-            <Btn onClick={() => { updateContent(postId) }} >変更を送信</Btn>
+            <Btn onClick={() => { updateContent(postId, inputEditingTaskText) }} >変更を送信</Btn>
           </ModalFooter>
         </ModalContent>
       </Modal>

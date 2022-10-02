@@ -7,7 +7,6 @@ import { userState } from '../../states/userState';
 
 const Header: React.FC = () => {
   const uid = useRecoilValue(userState);
-  console.log(uid);
   return (
     <Flex py={4} px={8} bg={'gray.400'} alignItems={'center'}>
       <Box fontSize={'xl'} fontWeight={'bold'} letterSpacing={'wider'}>中級編Todoアプリ</Box>

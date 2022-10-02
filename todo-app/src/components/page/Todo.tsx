@@ -1,6 +1,6 @@
 import React from 'react'
 import { onAuthStateChanged } from "firebase/auth";
-import { useRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 
 import Footer from '../Templates/Footer'
 import Header from '../Templates/Header'
@@ -10,12 +10,12 @@ import { userState } from '../../states/userState';
 import { auth } from '../../firebase';
 
 
-const Todo = () => {
-  const [uidState, setuidState] = useRecoilState<any>(userState)
+const Todo: React.FC = () => {
+  const setuidState = useSetRecoilState(userState)
+
   //ログインしているユーザーを取得
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log(user.uid)
       setuidState(user.uid)
     }
   });

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { doc, deleteDoc } from "firebase/firestore";
-import { Box, List, ListItem, Select, Spacer, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Button } from '@chakra-ui/react'
+import { Box, List, ListItem, Select, Spacer } from '@chakra-ui/react'
 import { updateDoc, serverTimestamp } from "firebase/firestore";
 
 import Btn from '../atoms/Btn'
@@ -15,11 +15,12 @@ import EditingModal from '../atoms/EditingModal';
 
 const Tasks: React.FC = () => {
   const { initGet } = useAlltodos();
-  const [taskItems, setTaskItems] = useRecoilState(taskItemState);
+  const taskItems = useRecoilValue(taskItemState)
   const setTaskSortValue = useSetRecoilState(taskSortState);
   const uid = useRecoilValue(userState)
+  const setTaskStatus = useSetRecoilState(taskProgressState);
+
   //chakraのModal
-  const { onOpen } = useDisclosure();
 
   //削除ボタンでタスクを一つ削除
   const todoDelete = async (id: string): Promise<void> => {
@@ -30,9 +31,6 @@ const Tasks: React.FC = () => {
   useEffect(() => {
     initGet(uid);
   }, [])
-  //selectのstate
-  const [taskStatus, setTaskStatus] = useRecoilState(taskProgressState);
-  //firebaseの上書き
   const updateStatus = async (postId: string, eventTaskProgress: string) => {
     const todo = doc(db, 'todos', postId)
     return updateDoc(todo, {
@@ -53,7 +51,7 @@ const Tasks: React.FC = () => {
       <List>
         {taskItems.map((item: any) => (
           <ListItem display={'flex'} key={item.id} py={4}>
-            <Box w={'80%'}>
+            <Box w={'60%'}>
               {item.content}
             </Box>
             <Spacer />
@@ -63,6 +61,7 @@ const Tasks: React.FC = () => {
               <option value='done'>完了</option>
             </Select>
             <Btn onClick={() => { todoDelete(item.id) }}>削除</Btn>
+            <Spacer width={4} />
             <EditingModal postId={item.id} />
           </ListItem>
         ))}

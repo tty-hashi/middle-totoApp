@@ -1,6 +1,6 @@
 import { atom } from 'recoil'
 
-export const taskProgressState = atom<{}>({
+export const taskProgressState = atom<string>({
   key: 'taskProgress',
   default: 'noStarted'
 })
