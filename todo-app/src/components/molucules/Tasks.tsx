@@ -1,21 +1,26 @@
 import React, { useEffect } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { doc, deleteDoc } from "firebase/firestore";
-import { Box, List, ListItem, Select, Spacer } from '@chakra-ui/react'
+import { Box, List, ListItem, Select, Spacer, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Button } from '@chakra-ui/react'
 import { updateDoc, serverTimestamp } from "firebase/firestore";
 
 import Btn from '../atoms/Btn'
 import { taskItemState } from '../../states/inpuTaskState'
-import useAlltodos from '../../hooks/useAlltodos'
+import { useAlltodos } from '../../hooks/useAlltodos'
 import { db } from '../../firebase';
 import { userState } from '../../states/userState';
-import { taskProgressState } from '../../states/taskProgressState';
+import { taskProgressState, taskSortState } from '../../states/taskProgressState';
+import EditingModal from '../atoms/EditingModal';
 
 
 const Tasks: React.FC = () => {
   const { initGet } = useAlltodos();
   const [taskItems, setTaskItems] = useRecoilState(taskItemState);
+  const setTaskSortValue = useSetRecoilState(taskSortState);
   const uid = useRecoilValue(userState)
+  //chakraのModal
+  const { onOpen } = useDisclosure();
+
   //削除ボタンでタスクを一つ削除
   const todoDelete = async (id: string): Promise<void> => {
     await deleteDoc(doc(db, 'todos', id))
@@ -25,11 +30,11 @@ const Tasks: React.FC = () => {
   useEffect(() => {
     initGet(uid);
   }, [])
-  //selectをハンドリング
+  //selectのstate
   const [taskStatus, setTaskStatus] = useRecoilState(taskProgressState);
-
-  const updateStatus = async (uid: string, eventTaskProgress:string) => {
-    const todo =  doc(db, 'todos', uid)
+  //firebaseの上書き
+  const updateStatus = async (postId: string, eventTaskProgress: string) => {
+    const todo = doc(db, 'todos', postId)
     return updateDoc(todo, {
       status: eventTaskProgress,
       updateAt: serverTimestamp(),
@@ -39,10 +44,10 @@ const Tasks: React.FC = () => {
   const selectboxHandler = async (e: React.ChangeEvent<HTMLSelectElement>, postId: string) => {
     const statusValue = e.target.value;
     setTaskStatus(statusValue);
-    await updateStatus(postId,statusValue)
+    await updateStatus(postId, statusValue)
+    setTaskSortValue('all')
     initGet(uid)
   }
-
   return (
     <>
       <List>
@@ -58,6 +63,7 @@ const Tasks: React.FC = () => {
               <option value='done'>完了</option>
             </Select>
             <Btn onClick={() => { todoDelete(item.id) }}>削除</Btn>
+            <EditingModal postId={item.id} />
           </ListItem>
         ))}
       </List>

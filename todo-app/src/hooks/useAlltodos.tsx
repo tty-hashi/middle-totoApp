@@ -5,11 +5,10 @@ import { db } from '../firebase';
 
 import { taskItemState } from '../states/inpuTaskState';
 
-const useAlltodos = () => {
+export const useAlltodos = () => {
   const [taskItems, setTaskItems] = useRecoilState(taskItemState);
-
   //firebaseからtaskを取得して、stateを更新
-  const initGet = async (uid: string) => {
+  const initGet = async (uid: string, selectValue?: string) => {
     console.log(`snapshot get`)
     const todo = await query(collection(db, 'todos'), where('uid', '==', uid));
     const querySnapshot = await getDocs(todo);
@@ -23,11 +22,30 @@ const useAlltodos = () => {
         status: doc.data().status
       });
     });
-    console.log(todos);
+    //inputAreaのselectに応じてtasksをsort
+    if (selectValue) {
+      switch (selectValue) {
+        case 'all':
+          setTaskItems([...todos]);
+          break;
+        case 'noStarted':
+          const noStartedTodos = todos.filter(({ status }) => status === 'noStarted')
+          setTaskItems([...noStartedTodos])
+          break;
+        case 'inProgress':
+          const inProgressTodos = todos.filter(({ status }) => status === 'inProgress')
+          setTaskItems([...inProgressTodos])
+          break;
+        case 'done':
+          const doneTodos = todos.filter(({ status }) => status === 'done')
+          setTaskItems([...doneTodos])
+          break;
+      }
+    } else {
+      setTaskItems([...todos])
+    }
 
-    setTaskItems([...todos])
   }
   return { initGet }
 }
 
-export default useAlltodos
