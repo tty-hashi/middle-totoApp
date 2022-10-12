@@ -11,6 +11,7 @@ import { inputTaskTextState } from '../../states/inpuTaskState'
 import { useAlltodos } from '../../hooks/useAlltodos';
 import { userState } from '../../states/userState';
 import { taskSortState } from '../../states/taskProgressState';
+import { selectList } from '../../types/todo';
 
 const InputArea: React.FC = () => {
   const [inputTaskText, setInputTaskText] = useRecoilState(inputTaskTextState)
@@ -39,20 +40,16 @@ const InputArea: React.FC = () => {
     initGet(uid, selectValue);
   }
   return (
-    <>
-      <form onSubmit={sbumitHandler}>
-        <Flex justifyContent={'center'} my={8}>
-          <InputText />
-          <Btn onClick={addTodo} disabled={inputTaskText === ''}>追加</Btn>
-          <Select w={'100px'} marginLeft={4} value={selectSortValue} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { selectTodo(e) }} >
-            <option value='all'>すべて</option>
-            <option value='noStarted'>未着手</option>
-            <option value='inProgress'>進行中</option>
-            <option value='done'>完了</option>
-          </Select>
-        </Flex>
-      </form>
-    </>
+    <form onSubmit={sbumitHandler}>
+      <Flex justifyContent={'center'} my={8}>
+        <InputText />
+        <Btn onClick={addTodo} disabled={inputTaskText === ''}>追加</Btn>
+        <Select w={'100px'} marginLeft={4} value={selectSortValue} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { selectTodo(e) }} >
+          <option value='all'>すべて</option>
+          {selectList.map(v => <option key={v.id} value={v.id}>{v.value}</option>)}
+        </Select>
+      </Flex>
+    </form>
   )
 }
 

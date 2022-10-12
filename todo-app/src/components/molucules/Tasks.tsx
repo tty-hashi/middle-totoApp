@@ -11,6 +11,7 @@ import { db } from '../../firebase';
 import { userState } from '../../states/userState';
 import { taskProgressState, taskSortState } from '../../states/taskProgressState';
 import EditingModal from '../atoms/EditingModal';
+import { selectList } from '../../types/todo';
 
 
 const Tasks: React.FC = () => {
@@ -56,9 +57,7 @@ const Tasks: React.FC = () => {
             </Box>
             <Spacer />
             <Select w={'100px'} marginRight={4} value={item.status} onChange={(e: any) => { selectboxHandler(e, item.id) }} >
-              <option value='noStarted'>未着手</option>
-              <option value='inProgress'>進行中</option>
-              <option value='done'>完了</option>
+              {selectList.map(v => <option key={v.id} value={v.id}>{v.value}</option>)}
             </Select>
             <Btn onClick={() => { todoDelete(item.id) }}>削除</Btn>
             <Spacer width={4} />

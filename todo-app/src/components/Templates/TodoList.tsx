@@ -10,27 +10,28 @@ import { sinInWithGoogle } from '../../firebase';
 
 const TodoList: React.FC = () => {
   const [user] = useAuthState(auth);
+
   return (
-    <Sdiv >
-      {user ?
-        (<>
+    <MainContentWrapper >
+      {user &&
+        <>
           <InputArea />
           <Tasks />
-        </>)
-        :
-        (<>
-          <SCenterDiv>
-            <Btn onClick={sinInWithGoogle} >ログイン</Btn>
-          </SCenterDiv>
-        </>)
+        </>
       }
-    </Sdiv>
+      {!user &&
+        <SCenterDiv>
+          <Btn onClick={sinInWithGoogle} >ログイン</Btn>
+        </SCenterDiv>
+      }
+
+    </MainContentWrapper>
   )
 }
 
 export default TodoList
 
-const Sdiv = styled.div`
+const MainContentWrapper = styled.div`
   margin: 0 auto;
   max-width: 700px;
   min-height:calc(100vh - 112px);

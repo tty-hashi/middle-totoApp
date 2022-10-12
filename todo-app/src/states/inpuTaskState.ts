@@ -1,13 +1,13 @@
 import { atom } from 'recoil'
 
-import { TodoTpye } from '../types/todo'
+import { TodoType } from '../types/todo'
 
 export const inputTaskTextState = atom<string>({
   key: 'inputTaskText',
   default: '',
 })
 
-export const taskItemState = atom<Array<TodoTpye>>({
+export const taskItemState = atom<Array<TodoType>>({
   key: 'taskItems',
-  default: [{ id: '', content: '', cratedAt: '' }]
+  default: [{ id: '', content: '', createdAt: '', status: 'noStarted' }]
 })
